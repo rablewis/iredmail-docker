@@ -2,6 +2,12 @@
 
 iRedMail allows to deploy an OPEN SOURCE, FULLY FLEDGED, FULL-FEATURED mail server in several minutes, for free. If several minutes is long time then this docker container can reduce help you and deploy your mail server in seconds.
 
+Build the docker image:
+
+```
+docker build .
+``` 
+
 Current version of container uses MySQL for accounts saving. In the future the LDAP can be used, so pull requests are welcome. Container contains all components (Postfix, Dovecot, Fail2ban, ClamAV, Roundcube, and SoGo) and MySQL server. In order to customize container several environmental variables are allowed:
 
   * DOMAIN -  Primary domain which is used for iRedMail instalation (example.com)
@@ -27,12 +33,21 @@ docker run --privileged -p 80:80 -p 443:443 \
            -e "TIMEZONE=Europe/Prague" \
            -e "POSTMASTER_PASSWORD={PLAIN}password" \
            -e "IREDAPD_PLUGINS=['reject_null_sender', 'reject_sender_login_mismatch', 'greylisting', 'throttle', 'amavisd_wblist', 'sql_alias_access_policy']" \
-           -v PATH/mysql:/var/lib/mysql \
-           -v PATH/vmail:/var/vmail \
-           -v PATH/clamav:/var/lib/clamav \
+           -v mail-mysql:/var/lib/mysql \
+           -v mail-vmail:/var/vmail \
+           -v mail-clamav:/var/lib/clamav \
            --name=iredmail lejmr/iredmail:mysql-latest
 
 ```
+
+NOTE: use localhost loopback for testing ("-p 127.0.0.1:80:80 -p 127.0.0.1:443:443")
+
+Point your browser to http://{IP Address}/iredadmin
+Login: user=postmaster@example.com pwd=password
+Now you can add domains and users.
+
+Check your email at http://{IP Address}/mail
+
 
 ## How to upgrade from 0.9.6 to 0.9.7
 iRedMail v0.9.7 changes structure of its persistent store, for easier email alias management:
