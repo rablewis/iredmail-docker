@@ -12,6 +12,7 @@
 # By default this script does nothing.
 
 if [ ! -e /opt/iredmail/.cv ]; then
+  export RANDFILE=/root/.rnd
   echo VMAIL_DB_BIND_PASSWD="$(openssl rand -hex 32)" > /opt/iredmail/.cv
   echo VMAIL_DB_ADMIN_PASSWD="$(openssl rand -hex 32)" >> /opt/iredmail/.cv
   echo AMAVISD_DB_PASSWD="$(openssl rand -hex 32)" >> /opt/iredmail/.cv
@@ -20,6 +21,12 @@ if [ ! -e /opt/iredmail/.cv ]; then
   echo SOGO_DB_PASSWD="$(openssl rand -hex 32)" >> /opt/iredmail/.cv
   echo SOGO_SIEVE_MASTER_PASSWD="$(openssl rand -hex 32)" >> /opt/iredmail/.cv
   echo IREDAPD_DB_PASSWD="$(openssl rand -hex 32)" >> /opt/iredmail/.cv
+fi
+
+hostname -f > /etc/mailname
+
+if [ ! -e /etc/ssl/private/iRedMail.key ] || [ ! -e /etc/ssl/certs/iRedMail.crt ]; then
+  (cd /etc/ssl && . /opt/iredmail/tools/generate_ssl_keys.sh)
 fi
 
 exit 0
